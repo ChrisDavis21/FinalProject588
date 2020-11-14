@@ -2,6 +2,7 @@ import cv2
 import sys
 import numpy as np
 from matplotlib import pyplot as plt
+# from sklearn.cluster import KMeans
 
 if (len(sys.argv) != 2):
     print("Please enter onne image file")
@@ -42,14 +43,13 @@ masked_img = cv2.bitwise_and(img2,img2,mask = rectangle) #mask
 
 # Calculate histogram with mask and without mask
 # Check third argument for mask
-color = ('r','g','b')
-for i,col in enumerate(color):
-    histr = cv2.calcHist([img2],[i],mask,[256],[0,256])
-    plt.subplot(324), plt.plot(histr,color = col)
-    plt.xlim([0,256])
+hist1r = cv2.calcHist([img2],[0],mask,[256],[0,256])
+hist1g = cv2.calcHist([img2],[1],mask,[256],[0,256])
+hist1b = cv2.calcHist([img2],[2],mask,[256],[0,256])
+plt.subplot(324), plt.plot(hist1r,color = 'r'), plt.plot(hist1g,color = 'g'), plt.plot(hist1b,color = 'b')
+plt.xlim([0,256])
     
-    
-    
+  
 mask2 = np.zeros(img2.shape[:2], np.uint8)
 mask2[:,:] = 0
 rectangle2 = cv2.rectangle(mask2,(x+xscalefactor,anewy),(x+w-xscalefactor,y+h),(255,255,255),-1)
@@ -57,13 +57,21 @@ masked_img2 = cv2.bitwise_and(img2,img2,mask = rectangle2) #mask
 
 # Calculate histogram with mask and without mask
 # Check third argument for mask
-color = ('r','g','b')
-for i,col in enumerate(color):
-    histr2 = cv2.calcHist([img2],[i],mask2,[256],[0,256])
-    plt.subplot(326), plt.plot(histr2,color = col)
-    plt.xlim([0,256])
 
-    
+hist2r = cv2.calcHist([img2],[0],mask2,[256],[0,256])
+hist2g = cv2.calcHist([img2],[1],mask2,[256],[0,256])
+hist2b = cv2.calcHist([img2],[2],mask2,[256],[0,256])
+plt.subplot(326), plt.plot(hist2r,color = 'r'), plt.plot(hist2g,color = 'g'), plt.plot(hist2b,color = 'b')
+plt.xlim([0,256])
+
+# CompareHistograms
+redVal = cv2.compareHist(hist1r, hist2r, cv2.HISTCMP_CORREL)
+greenVal = cv2.compareHist(hist1g, hist2g, cv2.HISTCMP_CORREL)  
+blueVal = cv2.compareHist(hist1b, hist2b, cv2.HISTCMP_CORREL)    
+print(redVal)
+print(greenVal)
+print(blueVal)
+
 #hist_full = cv2.calcHist([img2],[0],None,[256],[0,256])
 
 plt.subplot(321), plt.imshow(img2)

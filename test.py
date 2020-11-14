@@ -32,11 +32,12 @@ cv2.waitKey()
 img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 anewh = int(h/2)
 anewy = int(y+anewh)
+xscalefactor = int(0.1*(x+w)) #Reduces Horizontal Window by 20%
 
 # Make the Mask
 mask = np.zeros(img2.shape[:2], np.uint8)
 mask[:,:] = 0
-rectangle = cv2.rectangle(mask,(x,y),(x+w,y+(anewh)),(255,255,255),-1)
+rectangle = cv2.rectangle(mask,(x+xscalefactor,y),(x+w-xscalefactor,y+(anewh)),(255,255,255),-1)
 masked_img = cv2.bitwise_and(img2,img2,mask = rectangle) #mask
 
 # Calculate histogram with mask and without mask
@@ -51,7 +52,7 @@ for i,col in enumerate(color):
     
 mask2 = np.zeros(img2.shape[:2], np.uint8)
 mask2[:,:] = 0
-rectangle2 = cv2.rectangle(mask2,(x,anewy),(x+w,y+h),(255,255,255),-1)
+rectangle2 = cv2.rectangle(mask2,(x+xscalefactor,anewy),(x+w-xscalefactor,y+h),(255,255,255),-1)
 masked_img2 = cv2.bitwise_and(img2,img2,mask = rectangle2) #mask
 
 # Calculate histogram with mask and without mask

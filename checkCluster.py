@@ -44,7 +44,7 @@ masked_img = cv2.bitwise_and(img2,img2,mask = rectangle) #mask
 #rint(y+h)
 
 # maskSLIC result
-m_slic = segmentation.slic(img, n_segments = 2, compactness = 10, mask=mask, start_label=1, convert2lab=1)
+m_slic = segmentation.slic(img, n_segments = 3, compactness = 1, mask=mask, start_label=1, convert2lab=1)
 #print(np.matrix(m_slic))
 a = np.array(m_slic)
 #print(a.shape)

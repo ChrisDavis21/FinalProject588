@@ -7,7 +7,6 @@ from skimage import data
 from skimage import color
 from skimage import morphology
 from skimage import segmentation
-#np.set_printoptions(threshold=sys.maxsize)
 # Load the cascade
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
@@ -22,11 +21,10 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # Detect faces
 faces = face_cascade.detectMultiScale(gray, 1.1, 10)
 
-# Draw rectangle around the faces
-for (x, y, w, h) in faces:
-   # cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
-   print(1)
-
+x = faces[0][0]
+y =faces[0][1]
+w = faces[0][2]
+h = faces[0][3]
 # Display the output
 cv2.waitKey()
 
@@ -34,42 +32,57 @@ cv2.waitKey()
 img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 xscalefactor = int(0.15*(w)) #Reduces Horizontal Window by 20%
 
+#print(img2.shape)
 # Make the Mask
 mask = np.zeros(img2.shape[:2], np.uint8)
 mask[:,:] = 0
 rectangle = cv2.rectangle(mask,(x+xscalefactor,y),(x+w-xscalefactor,y+h),(255,255,255),-1)
 masked_img = cv2.bitwise_and(img2,img2,mask = rectangle) #mask
-
-# SLIC result
-slic = segmentation.slic(img, compactness = 20, start_label=1)
+#print(x+xscalefactor)
+#print(x+w-xscalefactor)
+#print(y)
+#rint(y+h)
 
 # maskSLIC result
 m_slic = segmentation.slic(img, n_segments = 2, compactness = 10, mask=mask, start_label=1, convert2lab=1)
-print(np.matrix(m_slic))
+#print(np.matrix(m_slic))
 a = np.array(m_slic)
+#print(a.shape)
 unique, counts = np.unique(a, return_counts=True)
-print(dict(zip(unique, counts)))
+#print(dict(zip(unique, counts)))
 
-# Display result
-fig, ax_arr = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(10, 10))
-ax1, ax2, ax3, ax4 = ax_arr.ravel()
+count = 0
+topTotal = 0
+bottomTotal = 0
+half = h/2
+half = round(half)
 
-ax1.imshow(img)
-ax1.set_title("Origin image")
+for i in range(x+xscalefactor, x+w-xscalefactor):
+    for j in range(y, y+half):
+        topTotal+=a[j,i]
+        count+=1
 
-ax2.imshow(mask, cmap="gray")
-ax2.set_title("Mask")
 
-ax3.imshow(segmentation.mark_boundaries(img, slic))
-ax3.contour(mask, colors='red', linewidths=1)
-ax3.set_title("SLIC")
+topAvg = topTotal / count
+#print(topAvg, topTotal, count)
+count = 0
 
-ax4.imshow(segmentation.mark_boundaries(img, m_slic))
-ax4.contour(mask, colors='red', linewidths=1)
-ax4.set_title("maskSLIC")
+for i in range(x+xscalefactor, x+w-xscalefactor):
+    for j in range(y+half, y+h):
+        bottomTotal += a[j,i]
+        count+=1
 
-for ax in ax_arr.ravel():
-    ax.set_axis_off()
+bottomAvg = bottomTotal / count
+#print(bottomAvg, bottomTotal, count)
+print(abs(topAvg-bottomAvg))
 
-plt.tight_layout()
-plt.show()
+
+
+
+
+
+
+
+
+
+

@@ -33,7 +33,7 @@ cv2.waitKey()
 img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 anewh = int(h/2)
 anewy = int(y+anewh)
-xscalefactor = int(0.1*(x+w)) #Reduces Horizontal Window by 20%
+xscalefactor = int(0.15*w) #Reduces Horizontal Window by 20%
 
 # Make the Mask
 mask = np.zeros(img2.shape[:2], np.uint8)
